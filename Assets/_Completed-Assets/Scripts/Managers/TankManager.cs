@@ -13,6 +13,8 @@ namespace Complete
 
         public Color m_PlayerColor;                             // This is the color this tank will be tinted
         public Transform m_SpawnPoint;                          // The position and direction the tank will have when it spawns
+        public Camera m_PlayerCamera;
+        public GameObject m_MapIndicator;                        // A sphere shape indicator that only will appear on overhead camera
         [HideInInspector] public int m_PlayerNumber;            // This specifies which player this the manager for
         [HideInInspector] public string m_ColoredPlayerText;    // A string that represents the player with their number colored to match their tank
         [HideInInspector] public GameObject m_Instance;         // A reference to the instance of the tank when it is created
@@ -22,6 +24,7 @@ namespace Complete
         private TankMovement m_Movement;                        // Reference to tank's movement script, used to disable and enable control
         private TankShooting m_Shooting;                        // Reference to tank's shooting script, used to disable and enable control
         private GameObject m_CanvasGameObject;                  // Used to disable the world space UI during the Starting and Ending phases of each round
+
 
 
         public void Setup ()
