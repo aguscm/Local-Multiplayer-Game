@@ -25,6 +25,9 @@ namespace Complete
         private TankManager m_RoundWinner;          // Reference to the winner of the current round.  Used to make an announcement of who won
         private TankManager m_GameWinner;           // Reference to the winner of the game.  Used to make an announcement of who won
 
+        public GameObject m_UIPlayerSelector;       // Reference to the Player Selector UI
+        public GameObject m_UITextMsg;              // Reference to the UI Main Text
+
 
         private void Start()
         {
@@ -32,17 +35,34 @@ namespace Complete
             m_StartWait = new WaitForSeconds (m_StartDelay);
             m_EndWait = new WaitForSeconds (m_EndDelay);
 
+            //SpawnAllTanks();
+            //SetCameraTargets();
+            //RearrangeCameras();
+
+            //// Once the tanks have been created and the camera is using them as targets, start the game
+            //StartCoroutine (GameLoop());
+
+            StartCoroutine(GameStarting());
+
+        }
+
+        public void StartGame(int numberOfPlayers)
+        {
+            SetNumberOfPlayers(numberOfPlayers);
             SpawnAllTanks();
             SetCameraTargets();
             RearrangeCameras();
 
             // Once the tanks have been created and the camera is using them as targets, start the game
-            StartCoroutine (GameLoop());
+            m_CameraControl.enabled = true;
+            StartCoroutine(GameLoop());
         }
 
         public void SetNumberOfPlayers(int number)
         {
             m_numberOfPlayers = number;
+
+
         }
 
         public void AddPlayer()
@@ -149,7 +169,10 @@ namespace Complete
         // This is called from start and will run each phase of the game one after another
         private IEnumerator GameLoop()
         {
-            // Start off by running the 'RoundStarting' coroutine but don't return until it's finished
+            //// Start off by running the 'GameStarting' coroutine but don't return until it's finished
+            //yield return StartCoroutine(GameStarting());
+
+            // Continue by running the 'RoundStarting' coroutine but don't return until it's finished
             yield return StartCoroutine (RoundStarting());
 
             // Once the 'RoundStarting' coroutine is finished, run the 'RoundPlaying' coroutine but don't return until it's finished
@@ -172,6 +195,16 @@ namespace Complete
             }
         }
 
+        private IEnumerator GameStarting() {
+
+            m_UIPlayerSelector.SetActive(false);
+            m_UITextMsg.SetActive(true);
+
+            yield return m_StartWait;
+
+            m_UIPlayerSelector.SetActive(true);
+            m_UITextMsg.SetActive(false);
+        }
 
         private IEnumerator RoundStarting()
         {
