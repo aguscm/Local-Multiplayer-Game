@@ -1,10 +1,19 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 namespace Complete
 {
     public class TankShooting : MonoBehaviour
     {
+
+        private PlayerInput m_PlayerInput;
+        private InputAction m_FireButton;
+        public bool m_FireButtonIsPressed = false;
+        public bool m_FireButtonFirstPressed = false;
+
+
         public int m_PlayerNumber = 1;              // Used to identify the different players
         public Rigidbody m_Shell;                   // Prefab of the shell
 		public Rigidbody m_ShellAlt;                // Prefab of the Alternate shell
@@ -18,14 +27,19 @@ namespace Complete
         public float m_MaxChargeTime = 0.75f;       // How long the shell can charge for before it is fired at max force
 
 
-        private string m_FireButton;                // The input axis that is used for launching shells
-		private string m_AltFireButton;  
+  //      private string m_FireButton;                // The input axis that is used for launching shells
+		//private string m_AltFireButton;  
         private float m_CurrentLaunchForce;         // The force that will be given to the shell when the fire button is released
         private float m_ChargeSpeed;                // How fast the launch force increases, based on the max charge time
-        private bool m_Fired;                       // Whether or not the shell has been launched with this button press
+        public bool m_Fired;                       // Whether or not the shell has been launched with this button press
 		private bool m_AltFire;                     // Whether or not the alternate shell has been launched with this button press
 
+        private void Awake()
+        {
+            m_PlayerInput = GetComponent<PlayerInput>();
+            m_FireButton = m_PlayerInput.actions["Fire"];
 
+        }
         private void OnEnable()
         {
             // When the tank is turned on, reset the launch force and the UI
@@ -37,37 +51,56 @@ namespace Complete
         private void Start ()
         {
             // The fire axis is based on the player number
-            m_FireButton = "Fire" + m_PlayerNumber;
-			m_AltFireButton = "AltFire" + m_PlayerNumber;
+            //         m_FireButton = "Fire" + m_PlayerNumber;
+            //m_AltFireButton = "AltFire" + m_PlayerNumber;
+
+            m_FireButton.performed += context =>
+            {
+                m_FireButtonIsPressed = true;
+
+            };
+
+            m_FireButton.canceled += context =>
+            {
+                m_FireButtonIsPressed = false;
+
+            };
+
+            m_Fired = true;
 
 
-            // The rate that the launch force charges up is the range of possible forces by the max charge time
-            m_ChargeSpeed = (m_MaxLaunchForce - m_MinLaunchForce) / m_MaxChargeTime;
+           // The rate that the launch force charges up is the range of possible forces by the max charge time
+           m_ChargeSpeed = (m_MaxLaunchForce - m_MinLaunchForce) / m_MaxChargeTime;
 
         }
 
-		private bool FireButton (int mode) {
 
-			bool action = false;
-			m_AltFire = false;	
 
-			switch (mode) {
-			case 0:
-				action = Input.GetButtonDown (m_FireButton);
-				m_AltFire = Input.GetButtonDown (m_AltFireButton);					
-			break;
-			case 1:
-				action = Input.GetButton (m_FireButton);
-				m_AltFire = Input.GetButton (m_AltFireButton);
-			break;
-			case 2:
-				action = Input.GetButtonUp (m_FireButton);
-				m_AltFire = Input.GetButtonUp (m_AltFireButton);
-			break;
-			}
+		//private bool FireButton (int mode) {
 
-			return action || m_AltFire;
-		}
+		//	bool action = false;
+		//	m_AltFire = false;	
+
+		//	switch (mode) {
+		//	case 0:
+  //                  //action = Input.GetButtonDown (m_FireButton);
+  //                  //m_AltFire = Input.GetButtonDown (m_AltFireButton);
+  //                  action = m_FireButtonStarted;					
+		//	break;
+		//	case 1:
+  //                  //action = Input.GetButton (m_FireButton);
+  //                  //m_AltFire = Input.GetButton (m_AltFireButton);
+  //                  action = m_FireButtonPerformed;
+  //                  break;
+		//	case 2:
+  //                  //action = Input.GetButtonUp (m_FireButton);
+  //                  //m_AltFire = Input.GetButtonUp (m_AltFireButton);
+  //                  action = m_FireButtonCanceled;
+		//	break;
+		//	}
+
+  //          return action || m_AltFire;
+		//}
 
 
         private void Update()
@@ -83,32 +116,34 @@ namespace Complete
                 Fire();
             }
             // Otherwise, if the fire button has just started being pressed...
-			else if (FireButton (0))
+            else if (m_FireButtonIsPressed && !m_FireButtonFirstPressed)
             {
-                // ... reset the fired flag and reset the launch force
-                m_Fired = false;
+                m_FireButtonFirstPressed = true;
+                //... reset the fired flag and reset the launch force
+               m_Fired = false;
                 m_CurrentLaunchForce = m_MinLaunchForce;
 
-                // Change the clip to the charging clip and start it playing
+                //Change the clip to the charging clip and start it playing
                 m_ShootingAudio.clip = m_ChargingClip;
-                m_ShootingAudio.Play ();
+                m_ShootingAudio.Play();
             }
-            // Otherwise, if the fire button is being held and the shell hasn't been launched yet...
-			else if (FireButton (1) && !m_Fired)
+            //Otherwise, if the fire button is being held and the shell hasn't been launched yet...
+            else if (m_FireButtonIsPressed && !m_Fired)
             {
-                // Increment the launch force and update the slider
+                //Increment the launch force and update the slider
                 m_CurrentLaunchForce += m_ChargeSpeed * Time.deltaTime;
 
                 m_AimSlider.value = m_CurrentLaunchForce;
             }
-            // Otherwise, if the fire button is released and the shell hasn't been launched yet...
-			else if (FireButton (2) && !m_Fired)
+            //Otherwise, if the fire button is released and the shell hasn't been launched yet...
+
+            else if (!m_FireButtonIsPressed && !m_Fired)
             {
-                // ... launch the shell
-                Fire ();
+                m_FireButtonFirstPressed = false;
+                //... launch the shell
+                Fire();
             }
         }
-
 
         private void Fire()  {
             // Set the fired flag so only Fire is only called once
