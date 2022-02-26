@@ -113,6 +113,7 @@ namespace Complete
             {
                 // ... use the max force and launch the shell
                 m_CurrentLaunchForce = m_MaxLaunchForce;
+                m_FireButtonFirstPressed = false;
                 Fire();
             }
             // Otherwise, if the fire button has just started being pressed...

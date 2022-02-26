@@ -66,7 +66,7 @@ namespace Complete
                     }
                 }
 			} 
-			else if (!splitMode && distance > limitDist + hysteresis) {
+			else if (GameManager.m_numberOfPlayers == 2 && !splitMode && distance > limitDist + hysteresis) {
 				Debug.Log ("Enable SplitScreen");
 				splitMode = true;
 

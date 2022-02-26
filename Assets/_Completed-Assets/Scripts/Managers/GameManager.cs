@@ -1,14 +1,16 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Cinemachine;
 
 namespace Complete
 {
     public class GameManager : MonoBehaviour
     {
-        public int m_numberOfPlayers = 2;             // The number of players of the game
-        private int m_maxNumberOfPlayers = 4;         // The maximum number of players in the game
+        static public int m_numberOfPlayers = 2;             // The number of players of the game
+        static public int m_maxNumberOfPlayers = 4;         // The maximum number of players in the game
         public int m_NumRoundsToWin = 5;            // The number of rounds a single player has to win to win the game
         public float m_StartDelay = 3f;             // The delay between the start of RoundStarting and RoundPlaying phases
         public float m_EndDelay = 3f;               // The delay between the end of RoundPlaying and RoundEnding phases
@@ -28,7 +30,6 @@ namespace Complete
         public GameObject m_UIPlayerSelector;       // Reference to the Player Selector UI
         public GameObject m_UITextMsg;              // Reference to the UI Main Text
 
-
         private void Start()
         {
             // Create the delays so they only have to be made once
@@ -42,7 +43,7 @@ namespace Complete
             //// Once the tanks have been created and the camera is using them as targets, start the game
             //StartCoroutine (GameLoop());
 
-            StartCoroutine(GameStarting());
+            //StartCoroutine(GameStarting());
 
         }
 
@@ -77,7 +78,7 @@ namespace Complete
             }
         }
 
-		
+	
 		private void SpawnAllTanks()
 		{
 			Camera mainCam = GameObject.Find ("Main Camera").GetComponent<Camera>();
@@ -103,6 +104,7 @@ namespace Complete
 			GameObject childCam = new GameObject ("Camera" + (i + 1));
 			Camera newCam = childCam.AddComponent<Camera>();		
 			newCam.CopyFrom (mainCam);
+            childCam.AddComponent<CinemachineBrain>();
 
 			childCam.transform.parent = m_Tanks[i].m_Instance.transform;
 
@@ -117,7 +119,13 @@ namespace Complete
             m_Tanks[i].m_PlayerCamera = newCam;
 
             //RearrangeCameras();
-		}
+
+            //GameObject playerCam = new GameObject("P" + (i + 1) + " Follow Cam");
+            //var VirtualCamera = playerCam.AddComponent<CinemachineVirtualCamera>();
+            //VirtualCamera.Follow = m_Tanks[i].m_Instance.transform;
+            //VirtualCamera.LookAt = m_Tanks[i].m_Instance.transform;
+            //VirtualCamera.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = new Vector3(-75.49f, 73.14f, -43.58f);
+        }
 
         private void RearrangeCameras()
         {
