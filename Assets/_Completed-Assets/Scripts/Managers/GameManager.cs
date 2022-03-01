@@ -95,7 +95,12 @@ namespace Complete
 				m_Tanks[i].m_PlayerNumber = i + 1;
 				m_Tanks[i].Setup();
 
-                //Adds the camera
+                //Changes the layer of the followcam
+                var followCam = m_Tanks[i].m_Instance.transform.Find("Follow Cam");
+                if (followCam != null)
+                {
+                    followCam.gameObject.layer = LayerMask.NameToLayer("CamP" + (i+1));
+                }
 				AddCamera (i, mainCam);
 
                 //Asigns the control scheme in case they share the same keyboard
@@ -109,6 +114,10 @@ namespace Complete
 
             }
 
+
+
+
+
             //RearrangeCameras();
 
             mainCam.gameObject.SetActive (false);
@@ -121,7 +130,8 @@ namespace Complete
 			newCam.CopyFrom (mainCam);
             childCam.AddComponent<CinemachineBrain>();
 
-			childCam.transform.parent = m_Tanks[i].m_Instance.transform;
+            childCam.transform.parent = m_Tanks[i].m_Instance.transform;
+            //childCam.GetComponent<CinemachineBrain>().
 
             //if (i == 0)
             //{
@@ -131,7 +141,13 @@ namespace Complete
             //{
             //    newCam.rect = new Rect(0.11f, 0.0f, 0.89f, 0.5f);
             //}
+            //Add the layer of the follow cam to the camera culling mask
+            newCam.cullingMask |= 1 << LayerMask.NameToLayer("CamP" + (i+1));
+
+            //Assign the cam to the tank
             m_Tanks[i].m_PlayerCamera = newCam;
+
+            
 
             //RearrangeCameras();
 
