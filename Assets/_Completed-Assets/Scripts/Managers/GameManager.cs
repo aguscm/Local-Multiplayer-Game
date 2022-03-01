@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Cinemachine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
 
 namespace Complete
 {
@@ -81,22 +83,35 @@ namespace Complete
 	
 		private void SpawnAllTanks()
 		{
+            //Saves the info of the mainCam
 			Camera mainCam = GameObject.Find ("Main Camera").GetComponent<Camera>();
 
-			// For all the players...
-			for (int i = 0; i < m_numberOfPlayers; i++)
+            // For all the players...
+            for (int i = 0; i < m_numberOfPlayers; i++)
 			{
 				// ... create the tanks, set their player number and references needed for control
 				m_Tanks[i].m_Instance =
 					Instantiate (m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
 				m_Tanks[i].m_PlayerNumber = i + 1;
 				m_Tanks[i].Setup();
+
+                //Adds the camera
 				AddCamera (i, mainCam);
-			}
+
+                //Asigns the control scheme in case they share the same keyboard
+                var player = PlayerInput.all[i];
+                Debug.Log(player.user);
+                //InputUser.PerformPairingWithDevice(Keyboard.current, player.user);
+
+                //m_Tanks[i].m_Instance.GetComponent<PlayerInput>().SwitchCurrentControlScheme("Keyboard"+(i+1), Keyboard.current);
+                //PlayerInput.all[i].SwitchCurrentControlScheme("Keyboard"+(i+1), Keyboard.current);
+                //m_Tanks[i].m_Instance.GetComponent<PlayerInput>().SwitchCurrentControlScheme("Keyboard" + (i + 1), Keyboard.current);
+
+            }
 
             //RearrangeCameras();
 
-			mainCam.gameObject.SetActive (false);
+            mainCam.gameObject.SetActive (false);
 		}
 
 		private void AddCamera (int i, Camera mainCam)
