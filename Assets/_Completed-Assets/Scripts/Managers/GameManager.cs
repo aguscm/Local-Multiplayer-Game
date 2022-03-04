@@ -6,6 +6,9 @@ using UnityEngine.UI;
 using Cinemachine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Users;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.Controls;
 
 namespace Complete
 {
@@ -31,7 +34,13 @@ namespace Complete
 
         public GameObject m_UIPlayerSelector;       // Reference to the Player Selector UI
         public GameObject m_UITextMsg;              // Reference to the UI Main Text
+        private PlayerInputManager playerInputManager;
 
+        //public MultiplayerEventSystem multiplayerEventSystem;
+        private void Awake()
+        {
+            playerInputManager = GetComponent<PlayerInputManager>();
+        }
         private void Start()
         {
             // Create the delays so they only have to be made once
@@ -80,8 +89,20 @@ namespace Complete
             }
         }
 
-	
-		private void SpawnAllTanks()
+        public void OnPlayerJoined(PlayerInput input)
+        {
+            Debug.Log(input.gameObject.name + " " + input.user.id);
+
+            InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
+            //switch (input.GetComponent<TankManager>().m_PlayerNumber)
+            //{
+            //    case 1:
+            //}
+
+            input.SwitchCurrentControlScheme("Keyboard" + (input.gameObject.GetComponent<TankMovement>().m_PlayerNumber), Keyboard.current);
+            //input.SwitchCurrentControlScheme("Keyboard" + (input.user.id), Keyboard.current);
+        }
+        private void SpawnAllTanks()
 		{
             //Saves the info of the mainCam
 			Camera mainCam = GameObject.Find ("Main Camera").GetComponent<Camera>();
@@ -104,23 +125,61 @@ namespace Complete
 				AddCamera (i, mainCam);
 
                 //Asigns the control scheme in case they share the same keyboard
-                var player = PlayerInput.all[i];
-                Debug.Log(player.user);
+                //var player = PlayerInput.all[i];
+                //Debug.Log(player.user);
                 //InputUser.PerformPairingWithDevice(Keyboard.current, player.user);
 
                 //m_Tanks[i].m_Instance.GetComponent<PlayerInput>().SwitchCurrentControlScheme("Keyboard"+(i+1), Keyboard.current);
                 //PlayerInput.all[i].SwitchCurrentControlScheme("Keyboard"+(i+1), Keyboard.current);
                 //m_Tanks[i].m_Instance.GetComponent<PlayerInput>().SwitchCurrentControlScheme("Keyboard" + (i + 1), Keyboard.current);
 
+
+                //Debug.Log(m_Tanks[i].m_Instance.GetComponent<PlayerInput>().defaultActionMap);
+                //m_Tanks[i].m_Instance.GetComponent<PlayerInput>().SwitchCurrentControlScheme("Keyboard" + (i + 1), Keyboard.current);
+               // playerInputManager.JoinPlayer(i, -1, "Keyboard" + (i + 1), Keyboard.current);
+
             }
 
 
+            for (int i = 0; i < m_numberOfPlayers; i++)
+            {
+                //var player = PlayerInput.all[i];
+                //var playerInput = m_Tanks[i].m_Instance.AddComponent<PlayerInput>();
+                //InputUser.PerformPairingWithDevice(Keyboard.current, player.user);
+                //Debug.Log("Player " + i + " is user id " + player.user.id);
+                //player.SwitchCurrentControlScheme("Keyboard"+(i+1), Keyboard.current);
+
+                //Debug.Log(PlayerInput.all[i].playerIndex);
+
+                //PlayerInput playerInput = new PlayerInput();
+                //    m_Tanks[i].m_Instance.GetComponent<PlayerInput>();
+                //print(playerInput.user.index);
 
 
+                //var player = PlayerInput.all[i];
+                //var user = InputUser.PerformPairingWithDevice(Keyboard.current);
+                //InputUser.PerformPairingWithDevice(Keyboard.current, user: user);
 
-            //RearrangeCameras();
+               
+                
+                //var actions = new TankInputSystem();
+
+
+                //var player = PlayerInput.all[i];
+
+                //InputUser.PerformPairingWithDevice(Keyboard.current, player.user, InputUserPairingOptions.ForcePlatformUserAccountSelection);
+                //player.user.AssociateActionsWithUser(actions);
+                //player.user.ActivateControlScheme(actions.Keyboard2Scheme);
+               
+                
+                
+                //player.SwitchCurrentControlScheme("Keyboard2", Keyboard.current);
+               //m_Tanks[i].m_Instance.GetComponent<PlayerInput>().SwitchCurrentControlScheme("Keyboard" + (i + 1), Keyboard.current);
+            }
+
 
             mainCam.gameObject.SetActive (false);
+
 		}
 
 		private void AddCamera (int i, Camera mainCam)

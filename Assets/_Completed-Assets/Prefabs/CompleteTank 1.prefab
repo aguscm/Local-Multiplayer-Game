@@ -10325,11 +10325,11 @@ GameObject:
   - component: {fileID: 11409376}
   - component: {fileID: 11488788}
   - component: {fileID: 1879729591521323161}
-  - component: {fileID: 2455324050860723545}
+  - component: {fileID: 6024661545473844054}
   - component: {fileID: 1394149793689262849}
   - component: {fileID: 6262827049793475718}
   m_Layer: 9
-  m_Name: CompleteTank
+  m_Name: CompleteTank 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10655,7 +10655,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   smooth: 0.5
   limitDist: 20
---- !u!114 &2455324050860723545
+--- !u!114 &6024661545473844054
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10681,7 +10681,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 1
+  m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard1
   m_DefaultActionMap: TankActionMap
   m_SplitScreenIndex: -1

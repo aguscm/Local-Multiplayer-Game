@@ -99,13 +99,13 @@ namespace Complete
             Turn();
         }
 
-        private void OnMove(InputValue value)
+        private void OnTankMove(InputValue value)
         {
            
             m_MovementInputValue = value.Get<float>();
         }
 
-        private void OnTurn(InputValue value)
+        private void OnTankTurn(InputValue value)
         {
 
             m_TurnInputValue = value.Get<float>();

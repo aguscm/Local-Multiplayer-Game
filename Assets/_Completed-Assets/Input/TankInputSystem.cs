@@ -28,7 +28,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
             ""id"": ""e92c4ca8-6a96-4f36-b81c-876957319af9"",
             ""actions"": [
                 {
-                    ""name"": ""Turn"",
+                    ""name"": ""TankTurn"",
                     ""type"": ""Value"",
                     ""id"": ""0e32017a-6723-4866-ac89-5336bc68be92"",
                     ""expectedControlType"": ""Axis"",
@@ -37,7 +37,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Move"",
+                    ""name"": ""TankMove"",
                     ""type"": ""Value"",
                     ""id"": ""75e03cb5-463b-404b-a940-4bbb06bde96f"",
                     ""expectedControlType"": ""Axis"",
@@ -160,7 +160,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Move"",
+                    ""action"": ""TankMove"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -171,7 +171,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard1"",
-                    ""action"": ""Move"",
+                    ""action"": ""TankMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -182,7 +182,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard1"",
-                    ""action"": ""Move"",
+                    ""action"": ""TankMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -193,7 +193,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Move"",
+                    ""action"": ""TankMove"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -204,7 +204,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard2"",
-                    ""action"": ""Move"",
+                    ""action"": ""TankMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -215,7 +215,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard2"",
-                    ""action"": ""Move"",
+                    ""action"": ""TankMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -226,29 +226,29 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Move"",
+                    ""action"": ""TankMove"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": ""negative"",
                     ""id"": ""b9c7784d-86a4-4bd1-b86d-82f3a6f85003"",
-                    ""path"": ""<Keyboard>/i"",
+                    ""path"": ""<Keyboard>/k"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard3"",
-                    ""action"": ""Move"",
+                    ""action"": ""TankMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""positive"",
                     ""id"": ""3c3c9825-1d7e-4a31-9e07-4145701f303c"",
-                    ""path"": ""<Keyboard>/k"",
+                    ""path"": ""<Keyboard>/i"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard3"",
-                    ""action"": ""Move"",
+                    ""action"": ""TankMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -259,7 +259,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Move"",
+                    ""action"": ""TankMove"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -270,7 +270,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard4"",
-                    ""action"": ""Move"",
+                    ""action"": ""TankMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -281,7 +281,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard4"",
-                    ""action"": ""Move"",
+                    ""action"": ""TankMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -292,7 +292,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Turn"",
+                    ""action"": ""TankTurn"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -303,7 +303,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard1"",
-                    ""action"": ""Turn"",
+                    ""action"": ""TankTurn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -314,7 +314,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard1"",
-                    ""action"": ""Turn"",
+                    ""action"": ""TankTurn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -325,7 +325,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Turn"",
+                    ""action"": ""TankTurn"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -336,7 +336,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard2"",
-                    ""action"": ""Turn"",
+                    ""action"": ""TankTurn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -347,7 +347,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard2"",
-                    ""action"": ""Turn"",
+                    ""action"": ""TankTurn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -358,7 +358,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Turn"",
+                    ""action"": ""TankTurn"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -369,7 +369,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard3"",
-                    ""action"": ""Turn"",
+                    ""action"": ""TankTurn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -380,7 +380,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard3"",
-                    ""action"": ""Turn"",
+                    ""action"": ""TankTurn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -391,7 +391,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Turn"",
+                    ""action"": ""TankTurn"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -402,7 +402,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard4"",
-                    ""action"": ""Turn"",
+                    ""action"": ""TankTurn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -413,7 +413,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard4"",
-                    ""action"": ""Turn"",
+                    ""action"": ""TankTurn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 }
@@ -469,8 +469,8 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
 }");
         // TankActionMap
         m_TankActionMap = asset.FindActionMap("TankActionMap", throwIfNotFound: true);
-        m_TankActionMap_Turn = m_TankActionMap.FindAction("Turn", throwIfNotFound: true);
-        m_TankActionMap_Move = m_TankActionMap.FindAction("Move", throwIfNotFound: true);
+        m_TankActionMap_TankTurn = m_TankActionMap.FindAction("TankTurn", throwIfNotFound: true);
+        m_TankActionMap_TankMove = m_TankActionMap.FindAction("TankMove", throwIfNotFound: true);
         m_TankActionMap_Fire = m_TankActionMap.FindAction("Fire", throwIfNotFound: true);
         m_TankActionMap_Start = m_TankActionMap.FindAction("Start", throwIfNotFound: true);
     }
@@ -532,16 +532,16 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
     // TankActionMap
     private readonly InputActionMap m_TankActionMap;
     private ITankActionMapActions m_TankActionMapActionsCallbackInterface;
-    private readonly InputAction m_TankActionMap_Turn;
-    private readonly InputAction m_TankActionMap_Move;
+    private readonly InputAction m_TankActionMap_TankTurn;
+    private readonly InputAction m_TankActionMap_TankMove;
     private readonly InputAction m_TankActionMap_Fire;
     private readonly InputAction m_TankActionMap_Start;
     public struct TankActionMapActions
     {
         private @TankInputSystem m_Wrapper;
         public TankActionMapActions(@TankInputSystem wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Turn => m_Wrapper.m_TankActionMap_Turn;
-        public InputAction @Move => m_Wrapper.m_TankActionMap_Move;
+        public InputAction @TankTurn => m_Wrapper.m_TankActionMap_TankTurn;
+        public InputAction @TankMove => m_Wrapper.m_TankActionMap_TankMove;
         public InputAction @Fire => m_Wrapper.m_TankActionMap_Fire;
         public InputAction @Start => m_Wrapper.m_TankActionMap_Start;
         public InputActionMap Get() { return m_Wrapper.m_TankActionMap; }
@@ -553,12 +553,12 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
         {
             if (m_Wrapper.m_TankActionMapActionsCallbackInterface != null)
             {
-                @Turn.started -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnTurn;
-                @Turn.performed -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnTurn;
-                @Turn.canceled -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnTurn;
-                @Move.started -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnMove;
-                @Move.performed -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnMove;
-                @Move.canceled -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnMove;
+                @TankTurn.started -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnTankTurn;
+                @TankTurn.performed -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnTankTurn;
+                @TankTurn.canceled -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnTankTurn;
+                @TankMove.started -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnTankMove;
+                @TankMove.performed -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnTankMove;
+                @TankMove.canceled -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnTankMove;
                 @Fire.started -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnFire;
                 @Fire.performed -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnFire;
                 @Fire.canceled -= m_Wrapper.m_TankActionMapActionsCallbackInterface.OnFire;
@@ -569,12 +569,12 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
             m_Wrapper.m_TankActionMapActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Turn.started += instance.OnTurn;
-                @Turn.performed += instance.OnTurn;
-                @Turn.canceled += instance.OnTurn;
-                @Move.started += instance.OnMove;
-                @Move.performed += instance.OnMove;
-                @Move.canceled += instance.OnMove;
+                @TankTurn.started += instance.OnTankTurn;
+                @TankTurn.performed += instance.OnTankTurn;
+                @TankTurn.canceled += instance.OnTankTurn;
+                @TankMove.started += instance.OnTankMove;
+                @TankMove.performed += instance.OnTankMove;
+                @TankMove.canceled += instance.OnTankMove;
                 @Fire.started += instance.OnFire;
                 @Fire.performed += instance.OnFire;
                 @Fire.canceled += instance.OnFire;
@@ -623,8 +623,8 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
     }
     public interface ITankActionMapActions
     {
-        void OnTurn(InputAction.CallbackContext context);
-        void OnMove(InputAction.CallbackContext context);
+        void OnTankTurn(InputAction.CallbackContext context);
+        void OnTankMove(InputAction.CallbackContext context);
         void OnFire(InputAction.CallbackContext context);
         void OnStart(InputAction.CallbackContext context);
     }
