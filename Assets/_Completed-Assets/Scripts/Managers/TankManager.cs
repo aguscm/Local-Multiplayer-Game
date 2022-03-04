@@ -20,6 +20,7 @@ namespace Complete
         [HideInInspector] public GameObject m_Instance;         // A reference to the instance of the tank when it is created
         [HideInInspector] public int m_Wins;                    // The number of wins this player has so far
 
+        public TankHealth m_TankHealth;                        // Reference to tank's health script, used to check if the tank is dead
         private TankMovement m_Movement;                        // Reference to tank's movement script, used to disable and enable control
         private TankShooting m_Shooting;                        // Reference to tank's shooting script, used to disable and enable control
         private GameObject m_CanvasGameObject;                  // Used to disable the world space UI during the Starting and Ending phases of each round
@@ -29,6 +30,7 @@ namespace Complete
         public void Setup ()
         {
             // Get references to the components
+            m_TankHealth = m_Instance.GetComponent<TankHealth>();
             m_Movement = m_Instance.GetComponent<TankMovement>();
             m_Shooting = m_Instance.GetComponent<TankShooting>();
             m_CanvasGameObject = m_Instance.GetComponentInChildren<Canvas>().gameObject;

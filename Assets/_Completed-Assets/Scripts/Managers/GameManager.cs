@@ -14,6 +14,7 @@ namespace Complete
 {
     public class GameManager : MonoBehaviour
     {
+        //[SerializeField] public TankInputSystem tankInputSystem;
         static public int m_numberOfPlayers = 2;             // The number of players of the game
         static public int m_maxNumberOfPlayers = 4;         // The maximum number of players in the game
         public int m_NumRoundsToWin = 5;            // The number of rounds a single player has to win to win the game
@@ -24,6 +25,7 @@ namespace Complete
         public GameObject m_TankPrefab;             // Reference to the prefab the players will control
         public TankManager[] m_Tanks;               // A collection of managers for enabling and disabling different aspects of the tanks
         public Camera m_OverheadCamera;             // This camera will appear with 3 players
+        public Camera m_mainCam;                    //Reference to the mainCam of the game
 
         
         private int m_RoundNumber;                  // Which round the game is currently on
@@ -35,6 +37,7 @@ namespace Complete
         public GameObject m_UIPlayerSelector;       // Reference to the Player Selector UI
         public GameObject m_UITextMsg;              // Reference to the UI Main Text
         private PlayerInputManager playerInputManager;
+        
 
         //public MultiplayerEventSystem multiplayerEventSystem;
         private void Awake()
@@ -46,6 +49,13 @@ namespace Complete
             // Create the delays so they only have to be made once
             m_StartWait = new WaitForSeconds (m_StartDelay);
             m_EndWait = new WaitForSeconds (m_EndDelay);
+            //Saves the info of the mainCam
+            m_mainCam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        }
+
+        void Update()
+        {
+
         }
 
         public void StartGame(int numberOfPlayers)
@@ -69,9 +79,10 @@ namespace Complete
 
         public void AddPlayer()
         {
-            if (m_numberOfPlayers < m_maxNumberOfPlayers)
+            if (m_numberOfPlayers <= m_maxNumberOfPlayers)
             {
                 m_numberOfPlayers++;
+                SpawnTank(m_numberOfPlayers);
                 RearrangeCameras();
             }else
             {
@@ -91,26 +102,52 @@ namespace Complete
 			Camera mainCam = GameObject.Find ("Main Camera").GetComponent<Camera>();
 
             // For all the players...
-            for (int i = 0; i < m_numberOfPlayers; i++)
+            for (int i = 0; i < m_maxNumberOfPlayers; i++)
 			{
-				// ... create the tanks, set their player number and references needed for control
-				m_Tanks[i].m_Instance =
-					Instantiate (m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
-				m_Tanks[i].m_PlayerNumber = i + 1;
-				m_Tanks[i].Setup();
-
-                //Changes the layer of the followcam
-                var followCam = m_Tanks[i].m_Instance.transform.Find("Follow Cam");
-                if (followCam != null)
-                {
-                    followCam.gameObject.layer = LayerMask.NameToLayer("CamP" + (i+1));
-                }
-				AddCamera (i, mainCam);
+                SpawnTank(i);
             }
 
             mainCam.gameObject.SetActive (false);
 
 		}
+
+        void SpawnTank(int i)
+        {
+
+            // ... create the tank, set their player number and references needed for control
+            m_Tanks[i].m_Instance =
+                Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
+            m_Tanks[i].m_PlayerNumber = i + 1;
+            m_Tanks[i].Setup();
+
+            //Changes the layer of the followcam
+            var followCam = m_Tanks[i].m_Instance.transform.Find("Follow Cam");
+            Debug.Log(followCam);
+            if (followCam != null)
+            {
+                
+                followCam.gameObject.layer = LayerMask.NameToLayer("CamP" + (i + 1));
+                Debug.Log("follow cam of " + i + " is " + followCam.gameObject.layer);
+            }
+            //AddCamera(i, m_mainCam);
+            //If the tank is not still playing, deactivate its controllers
+            //if (i >= m_numberOfPlayers)
+            //{
+            //    DisableTank(m_Tanks[i].m_Instance);
+            //}
+        }
+
+        private void DisableTank(GameObject tank)
+        {
+            foreach (MonoBehaviour component in tank.GetComponents<MonoBehaviour>())
+            {
+                component.enabled = false;
+            }
+
+            tank.GetComponent<PlayerInput>().enabled = true;
+
+         
+        }
 
 		private void AddCamera (int i, Camera mainCam)
         {
@@ -125,33 +162,59 @@ namespace Complete
 
             //Assign the cam to the tank
             m_Tanks[i].m_PlayerCamera = newCam;
+            newCam.enabled = false;
 
         }
 
         private void RearrangeCameras()
         {
-            switch (m_numberOfPlayers)
+            foreach (TankManager tank in m_Tanks)
+            {
+                Destroy(tank.m_PlayerCamera);
+            }
+            foreach (Camera camera in Camera.allCameras)
+            {
+                camera.enabled = false;
+                Debug.Log(camera.gameObject.name);
+            }
+
+            int tanksAlive = 0;
+            List<TankManager> TanksAlive = new List<TankManager>();
+
+            //Search for the tanks alive in this moment
+            for (int i = 0; i < m_numberOfPlayers; i++)
+            {
+                if (!m_Tanks[i].m_TankHealth.isDead())
+                {
+                    tanksAlive++;
+                    TanksAlive.Add(m_Tanks[i]);
+                    AddCamera(i, m_mainCam);
+
+                    //m_Tanks[i].m_PlayerCamera.enabled = true;
+                }
+            }
+            switch (TanksAlive.Count)
             {
                 case 2:
                     Debug.Log("2 cameras");
-                    m_Tanks[0].m_PlayerCamera.rect = new Rect(0.0f, 0.5f, 0.89f, 0.5f);
-                    m_Tanks[1].m_PlayerCamera.rect = new Rect(0.11f, 0.0f, 0.89f, 0.5f);
+                    TanksAlive[0].m_PlayerCamera.rect = new Rect(0.0f, 0.5f, 0.89f, 0.5f);
+                    TanksAlive[1].m_PlayerCamera.rect = new Rect(0.11f, 0.0f, 0.89f, 0.5f);
                     m_OverheadCamera.gameObject.SetActive(false);
                     break;
                 case 3:
                     Debug.Log("3 cameras");
-                    m_Tanks[0].m_PlayerCamera.rect = new Rect(0.02f, 0.51f, 0.48f, 0.48f);
-                    m_Tanks[1].m_PlayerCamera.rect = new Rect(0.51f, 0.51f, 0.48f, 0.48f);
-                    m_Tanks[2].m_PlayerCamera.rect = new Rect(0.02f, 0.01f, 0.48f, 0.48f);
+                    TanksAlive[0].m_PlayerCamera.rect = new Rect(0.02f, 0.51f, 0.48f, 0.48f);
+                    TanksAlive[1].m_PlayerCamera.rect = new Rect(0.51f, 0.51f, 0.48f, 0.48f);
+                    TanksAlive[2].m_PlayerCamera.rect = new Rect(0.02f, 0.01f, 0.48f, 0.48f);
                     m_OverheadCamera.gameObject.SetActive(true);
                     m_OverheadCamera.rect = new Rect(0.51f, 0.01f, 0.48f, 0.48f);
                     break;
                 case 4:
                     Debug.Log("4 cameras");
-                    m_Tanks[0].m_PlayerCamera.rect = new Rect(0.02f, 0.51f, 0.48f, 0.48f);
-                    m_Tanks[1].m_PlayerCamera.rect = new Rect(0.51f, 0.51f, 0.48f, 0.48f);
-                    m_Tanks[2].m_PlayerCamera.rect = new Rect(0.02f, 0.01f, 0.48f, 0.48f);
-                    m_Tanks[3].m_PlayerCamera.rect = new Rect(0.51f, 0.01f, 0.48f, 0.48f);
+                    TanksAlive[0].m_PlayerCamera.rect = new Rect(0.02f, 0.51f, 0.48f, 0.48f);
+                    TanksAlive[1].m_PlayerCamera.rect = new Rect(0.51f, 0.51f, 0.48f, 0.48f);
+                    TanksAlive[2].m_PlayerCamera.rect = new Rect(0.02f, 0.01f, 0.48f, 0.48f);
+                    TanksAlive[3].m_PlayerCamera.rect = new Rect(0.51f, 0.01f, 0.48f, 0.48f);
                     m_OverheadCamera.gameObject.SetActive(false);
                     break;
             }
@@ -367,7 +430,7 @@ namespace Complete
         // This function is used to turn all the tanks back on and reset their positions and properties
         private void ResetAllTanks()
         {
-            for (int i = 0; i < m_numberOfPlayers; i++)
+            for (int i = 0; i < m_maxNumberOfPlayers; i++)
             {
                 m_Tanks[i].Reset();
             }
@@ -376,7 +439,7 @@ namespace Complete
 
         private void EnableTankControl()
         {
-            for (int i = 0; i < m_numberOfPlayers; i++)
+            for (int i = 0; i < m_maxNumberOfPlayers; i++)
             {
                 m_Tanks[i].EnableControl();
             }
@@ -385,7 +448,7 @@ namespace Complete
 
         private void DisableTankControl()
         {
-            for (int i = 0; i < m_numberOfPlayers; i++)
+            for (int i = 0; i < m_maxNumberOfPlayers; i++)
             {
                 m_Tanks[i].DisableControl();
             }

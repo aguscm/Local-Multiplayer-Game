@@ -87,5 +87,11 @@ namespace Complete
             // Turn the tank off
             gameObject.SetActive (false);
         }
+
+        public bool isDead()
+        {
+            if (m_Dead) return true;
+            return false;
+        }
     }
 }
