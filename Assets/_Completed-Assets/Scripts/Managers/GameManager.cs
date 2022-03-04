@@ -46,16 +46,6 @@ namespace Complete
             // Create the delays so they only have to be made once
             m_StartWait = new WaitForSeconds (m_StartDelay);
             m_EndWait = new WaitForSeconds (m_EndDelay);
-
-            //SpawnAllTanks();
-            //SetCameraTargets();
-            //RearrangeCameras();
-
-            //// Once the tanks have been created and the camera is using them as targets, start the game
-            //StartCoroutine (GameLoop());
-
-            //StartCoroutine(GameStarting());
-
         }
 
         public void StartGame(int numberOfPlayers)
@@ -91,16 +81,9 @@ namespace Complete
 
         public void OnPlayerJoined(PlayerInput input)
         {
-            Debug.Log(input.gameObject.name + " " + input.user.id);
-
             InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
-            //switch (input.GetComponent<TankManager>().m_PlayerNumber)
-            //{
-            //    case 1:
-            //}
-
             input.SwitchCurrentControlScheme("Keyboard" + (input.gameObject.GetComponent<TankMovement>().m_PlayerNumber), Keyboard.current);
-            //input.SwitchCurrentControlScheme("Keyboard" + (input.user.id), Keyboard.current);
+
         }
         private void SpawnAllTanks()
 		{
@@ -123,60 +106,7 @@ namespace Complete
                     followCam.gameObject.layer = LayerMask.NameToLayer("CamP" + (i+1));
                 }
 				AddCamera (i, mainCam);
-
-                //Asigns the control scheme in case they share the same keyboard
-                //var player = PlayerInput.all[i];
-                //Debug.Log(player.user);
-                //InputUser.PerformPairingWithDevice(Keyboard.current, player.user);
-
-                //m_Tanks[i].m_Instance.GetComponent<PlayerInput>().SwitchCurrentControlScheme("Keyboard"+(i+1), Keyboard.current);
-                //PlayerInput.all[i].SwitchCurrentControlScheme("Keyboard"+(i+1), Keyboard.current);
-                //m_Tanks[i].m_Instance.GetComponent<PlayerInput>().SwitchCurrentControlScheme("Keyboard" + (i + 1), Keyboard.current);
-
-
-                //Debug.Log(m_Tanks[i].m_Instance.GetComponent<PlayerInput>().defaultActionMap);
-                //m_Tanks[i].m_Instance.GetComponent<PlayerInput>().SwitchCurrentControlScheme("Keyboard" + (i + 1), Keyboard.current);
-               // playerInputManager.JoinPlayer(i, -1, "Keyboard" + (i + 1), Keyboard.current);
-
             }
-
-
-            for (int i = 0; i < m_numberOfPlayers; i++)
-            {
-                //var player = PlayerInput.all[i];
-                //var playerInput = m_Tanks[i].m_Instance.AddComponent<PlayerInput>();
-                //InputUser.PerformPairingWithDevice(Keyboard.current, player.user);
-                //Debug.Log("Player " + i + " is user id " + player.user.id);
-                //player.SwitchCurrentControlScheme("Keyboard"+(i+1), Keyboard.current);
-
-                //Debug.Log(PlayerInput.all[i].playerIndex);
-
-                //PlayerInput playerInput = new PlayerInput();
-                //    m_Tanks[i].m_Instance.GetComponent<PlayerInput>();
-                //print(playerInput.user.index);
-
-
-                //var player = PlayerInput.all[i];
-                //var user = InputUser.PerformPairingWithDevice(Keyboard.current);
-                //InputUser.PerformPairingWithDevice(Keyboard.current, user: user);
-
-               
-                
-                //var actions = new TankInputSystem();
-
-
-                //var player = PlayerInput.all[i];
-
-                //InputUser.PerformPairingWithDevice(Keyboard.current, player.user, InputUserPairingOptions.ForcePlatformUserAccountSelection);
-                //player.user.AssociateActionsWithUser(actions);
-                //player.user.ActivateControlScheme(actions.Keyboard2Scheme);
-               
-                
-                
-                //player.SwitchCurrentControlScheme("Keyboard2", Keyboard.current);
-               //m_Tanks[i].m_Instance.GetComponent<PlayerInput>().SwitchCurrentControlScheme("Keyboard" + (i + 1), Keyboard.current);
-            }
-
 
             mainCam.gameObject.SetActive (false);
 
@@ -190,31 +120,12 @@ namespace Complete
             childCam.AddComponent<CinemachineBrain>();
 
             childCam.transform.parent = m_Tanks[i].m_Instance.transform;
-            //childCam.GetComponent<CinemachineBrain>().
 
-            //if (i == 0)
-            //{
-            //    newCam.rect = new Rect(0.0f, 0.5f, 0.89f, 0.5f);
-            //}
-            //else
-            //{
-            //    newCam.rect = new Rect(0.11f, 0.0f, 0.89f, 0.5f);
-            //}
-            //Add the layer of the follow cam to the camera culling mask
             newCam.cullingMask |= 1 << LayerMask.NameToLayer("CamP" + (i+1));
 
             //Assign the cam to the tank
             m_Tanks[i].m_PlayerCamera = newCam;
 
-            
-
-            //RearrangeCameras();
-
-            //GameObject playerCam = new GameObject("P" + (i + 1) + " Follow Cam");
-            //var VirtualCamera = playerCam.AddComponent<CinemachineVirtualCamera>();
-            //VirtualCamera.Follow = m_Tanks[i].m_Instance.transform;
-            //VirtualCamera.LookAt = m_Tanks[i].m_Instance.transform;
-            //VirtualCamera.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = new Vector3(-75.49f, 73.14f, -43.58f);
         }
 
         private void RearrangeCameras()
