@@ -26,7 +26,8 @@ namespace Complete
         public TankManager[] m_Tanks;               // A collection of managers for enabling and disabling different aspects of the tanks
         public Camera m_OverheadCamera;             // This camera will appear with 3 players
         public Camera m_mainCam;                    //Reference to the mainCam of the game
-
+        public int CullingMask;
+        public InputActionAsset m_tankInputAsset;
         
         private int m_RoundNumber;                  // Which round the game is currently on
         private WaitForSeconds m_StartWait;         // Used to have a delay whilst the round starts
@@ -37,12 +38,19 @@ namespace Complete
         public GameObject m_UIPlayerSelector;       // Reference to the Player Selector UI
         public GameObject m_UITextMsg;              // Reference to the UI Main Text
         private PlayerInputManager playerInputManager;
+        public int numberOfInputPlayers = 0;
+        //public TankInputSystem tankInputSystem;
+        //public InputAction ButtonNewPlayer;
+   
         
 
         //public MultiplayerEventSystem multiplayerEventSystem;
         private void Awake()
         {
             playerInputManager = GetComponent<PlayerInputManager>();
+            //tankInputSystem = new TankInputSystem();
+            //ButtonNewPlayer = tankInputSystem.TankActionMap.Start;
+
         }
         private void Start()
         {
@@ -51,11 +59,15 @@ namespace Complete
             m_EndWait = new WaitForSeconds (m_EndDelay);
             //Saves the info of the mainCam
             m_mainCam = GameObject.Find("Main Camera").GetComponent<Camera>();
+            CullingMask = m_mainCam.cullingMask;
         }
 
         void Update()
         {
-
+            //if (ButtonNewPlayer.triggered)
+            //{
+            //    Debug.Log("trigger start");
+            //}
         }
 
         public void StartGame(int numberOfPlayers)
@@ -82,7 +94,7 @@ namespace Complete
             if (m_numberOfPlayers <= m_maxNumberOfPlayers)
             {
                 m_numberOfPlayers++;
-                SpawnTank(m_numberOfPlayers);
+                SpawnTank(m_numberOfPlayers-1);
                 RearrangeCameras();
             }else
             {
@@ -92,42 +104,101 @@ namespace Complete
 
         public void OnPlayerJoined(PlayerInput input)
         {
-            InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
-            input.SwitchCurrentControlScheme("Keyboard" + (input.gameObject.GetComponent<TankMovement>().m_PlayerNumber), Keyboard.current);
+            StartCoroutine(WaitSeconds(1, input));
+
+            //if (input.gameObject.GetComponent<TankMovement>() != null)
+            //{
+            //    //numberOfInputPlayers++;
+            //    Debug.Log("PLAYER NUMBER IS " + input.gameObject.GetComponent);
+            //    InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
+            //    input.SwitchCurrentControlScheme("Keyboard" + (numberOfInputPlayers), Keyboard.current);
+
+            //}
 
         }
+
+        public IEnumerator WaitSeconds (int seconds, PlayerInput input)
+        {
+            yield return new WaitForSeconds(seconds);
+            for (int i = 0; i < m_Tanks.Length; i++)
+            {
+
+                if (input.gameObject == m_Tanks[i].m_Instance)
+                {
+                    Debug.Log("TANK IS " + m_Tanks[i].m_Instance.name);
+                    Debug.Log("PLAYER NUMBER IS " + m_Tanks[i].m_PlayerNumber);
+                    ////TankInputSystem tankInputSystem = new TankInputSystem();
+                    //InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
+                    //input.neverAutoSwitchControlSchemes = true;
+                    //input.actions = m_tankInputAsset;
+                    //input.defaultControlScheme = "Keyboard" + (m_Tanks[i].m_PlayerNumber);
+                    //input.SwitchCurrentActionMap("TankActionMap");
+
+                    InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
+                    input.SwitchCurrentControlScheme("Keyboard" + (m_Tanks[i].m_PlayerNumber), Keyboard.current);
+                    break;
+                }
+            }
+        }
+
+        //public void OnPlayerLeft(PlayerInput input)
+        //{
+        //    if (input.gameObject.GetComponent<TankMovement>() != null)
+        //    {
+        //        numberOfInputPlayers--;
+
+        //    }
+        //}
         private void SpawnAllTanks()
 		{
-            //Saves the info of the mainCam
-			Camera mainCam = GameObject.Find ("Main Camera").GetComponent<Camera>();
 
             // For all the players...
-            for (int i = 0; i < m_maxNumberOfPlayers; i++)
+            for (int i = 0; i < m_numberOfPlayers; i++)
 			{
                 SpawnTank(i);
             }
 
-            mainCam.gameObject.SetActive (false);
+            m_mainCam.enabled = false;
 
 		}
 
         void SpawnTank(int i)
         {
+            //var newTank = PlayerInput.Instantiate(m_TankPrefab, -1, "Keyboard"+(i+1), -1, Keyboard.current);
+            //m_Tanks[i].m_PlayerNumber = i + 1;
+            //m_Tanks[i].m_Instance = newTank.gameObject;
+            //newTank.transform.position = m_Tanks[i].m_SpawnPoint.position;
+            //newTank.transform.rotation = m_Tanks[i].m_SpawnPoint.rotation;
+            //m_Tanks[i].Setup();
+
+
+
 
             // ... create the tank, set their player number and references needed for control
+            m_Tanks[i].m_PlayerNumber = i + 1;
             m_Tanks[i].m_Instance =
                 Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
-            m_Tanks[i].m_PlayerNumber = i + 1;
+
             m_Tanks[i].Setup();
+
+            m_Tanks[i].m_Instance.AddComponent<PlayerInput>();
+
+
+            //TEST INPUT MANAGER
+            //var input = m_Tanks[i].m_Instance.GetComponent<PlayerInput>();
+            ////playerInputManager.JoinPlayer(i, -1, "Keyboard" + (i + 1), Keyboard.current);
+
+            //InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
+            //input.SwitchCurrentControlScheme("Keyboard" + (input.gameObject.GetComponent<TankMovement>().m_PlayerNumber), Keyboard.current);
+
+            //END TEST
+
 
             //Changes the layer of the followcam
             var followCam = m_Tanks[i].m_Instance.transform.Find("Follow Cam");
-            Debug.Log(followCam);
             if (followCam != null)
-            {
-                
+            {              
                 followCam.gameObject.layer = LayerMask.NameToLayer("CamP" + (i + 1));
-                Debug.Log("follow cam of " + i + " is " + followCam.gameObject.layer);
             }
             //AddCamera(i, m_mainCam);
             //If the tank is not still playing, deactivate its controllers
@@ -157,12 +228,12 @@ namespace Complete
             childCam.AddComponent<CinemachineBrain>();
 
             childCam.transform.parent = m_Tanks[i].m_Instance.transform;
-
+            newCam.cullingMask = CullingMask;
             newCam.cullingMask |= 1 << LayerMask.NameToLayer("CamP" + (i+1));
 
             //Assign the cam to the tank
             m_Tanks[i].m_PlayerCamera = newCam;
-            newCam.enabled = false;
+            newCam.enabled = true;
 
         }
 
@@ -170,13 +241,18 @@ namespace Complete
         {
             foreach (TankManager tank in m_Tanks)
             {
-                Destroy(tank.m_PlayerCamera);
+                var playercamera = tank.m_PlayerCamera;
+                if (playercamera != null)
+                {
+                    Destroy(tank.m_PlayerCamera.gameObject);
+                }
+                
             }
-            foreach (Camera camera in Camera.allCameras)
-            {
-                camera.enabled = false;
-                Debug.Log(camera.gameObject.name);
-            }
+            //foreach (Camera camera in Camera.allCameras)
+            //{
+            //    camera.enabled = false;
+            //    Debug.Log(camera.gameObject.name);
+            //}
 
             int tanksAlive = 0;
             List<TankManager> TanksAlive = new List<TankManager>();
@@ -430,7 +506,7 @@ namespace Complete
         // This function is used to turn all the tanks back on and reset their positions and properties
         private void ResetAllTanks()
         {
-            for (int i = 0; i < m_maxNumberOfPlayers; i++)
+            for (int i = 0; i < m_numberOfPlayers; i++)
             {
                 m_Tanks[i].Reset();
             }
@@ -439,7 +515,7 @@ namespace Complete
 
         private void EnableTankControl()
         {
-            for (int i = 0; i < m_maxNumberOfPlayers; i++)
+            for (int i = 0; i < m_numberOfPlayers; i++)
             {
                 m_Tanks[i].EnableControl();
             }
@@ -448,7 +524,7 @@ namespace Complete
 
         private void DisableTankControl()
         {
-            for (int i = 0; i < m_maxNumberOfPlayers; i++)
+            for (int i = 0; i < m_numberOfPlayers; i++)
             {
                 m_Tanks[i].DisableControl();
             }
