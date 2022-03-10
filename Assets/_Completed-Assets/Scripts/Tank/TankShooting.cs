@@ -8,7 +8,7 @@ namespace Complete
     public class TankShooting : MonoBehaviour
     {
 
-        private PlayerInput m_PlayerInput;
+        public PlayerInput m_PlayerInput;
         private InputAction m_FireButton;
         public bool m_FireButtonIsPressed = false;
         public bool m_FireButtonFirstPressed = false;
@@ -36,8 +36,9 @@ namespace Complete
 
         private void Awake()
         {
-            m_PlayerInput = GetComponent<PlayerInput>();
-            m_FireButton = m_PlayerInput.actions["Fire"];
+           // m_PlayerInput = GameManager.m_Tanks[m_PlayerNumber - 1].m_multiplayerEventSystem.gameObject.GetComponent<PlayerInput>();
+            //m_PlayerInput = GetComponent<PlayerInput>();
+            
 
         }
         private void OnEnable()
@@ -53,8 +54,8 @@ namespace Complete
             // The fire axis is based on the player number
             //         m_FireButton = "Fire" + m_PlayerNumber;
             //m_AltFireButton = "AltFire" + m_PlayerNumber;
-
-            m_FireButton.performed += context =>
+            m_FireButton = m_PlayerInput.actions["Fire"];
+            m_FireButton.started += context =>
             {
                 m_FireButtonIsPressed = true;
 

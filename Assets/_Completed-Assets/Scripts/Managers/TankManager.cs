@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.InputSystem.UI;
 
 namespace Complete
 {
@@ -24,6 +25,7 @@ namespace Complete
         private TankMovement m_Movement;                        // Reference to tank's movement script, used to disable and enable control
         private TankShooting m_Shooting;                        // Reference to tank's shooting script, used to disable and enable control
         private GameObject m_CanvasGameObject;                  // Used to disable the world space UI during the Starting and Ending phases of each round
+        public MultiplayerEventSystem m_multiplayerEventSystem;   //Reference to the multiplayer event system of the tank
 
 
 

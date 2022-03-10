@@ -9,14 +9,16 @@ using UnityEngine.InputSystem.Users;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.Controls;
+using System;
+using UnityEngine.InputSystem.UI;
 
 namespace Complete
 {
     public class GameManager : MonoBehaviour
     {
         //[SerializeField] public TankInputSystem tankInputSystem;
-        static public int m_numberOfPlayers = 2;             // The number of players of the game
-        static public int m_maxNumberOfPlayers = 4;         // The maximum number of players in the game
+        static public int m_numberOfPlayers = 2;    // The number of players of the game
+        static public int m_maxNumberOfPlayers = 4; // The maximum number of players in the game
         public int m_NumRoundsToWin = 5;            // The number of rounds a single player has to win to win the game
         public float m_StartDelay = 3f;             // The delay between the start of RoundStarting and RoundPlaying phases
         public float m_EndDelay = 3f;               // The delay between the end of RoundPlaying and RoundEnding phases
@@ -39,6 +41,8 @@ namespace Complete
         public GameObject m_UITextMsg;              // Reference to the UI Main Text
         private PlayerInputManager playerInputManager;
         public int numberOfInputPlayers = 0;
+        public MultiplayerEventSystem[] multiplayerEventSystems;
+        public GameObject m_UIButtonJoinPlayer;      // Reference to the button to join player, will be disabled when max players has been joined
         //public TankInputSystem tankInputSystem;
         //public InputAction ButtonNewPlayer;
    
@@ -96,15 +100,25 @@ namespace Complete
                 m_numberOfPlayers++;
                 SpawnTank(m_numberOfPlayers-1);
                 RearrangeCameras();
-            }else
+
+                // Disable the button of join another player if there are the max number of players
+                if (m_numberOfPlayers == m_maxNumberOfPlayers)
+                {
+                    m_UIButtonJoinPlayer.SetActive(false);
+                }
+
+            }
+            else
             {
                 Debug.Log("It is not possible to add more than " + m_maxNumberOfPlayers + " players");
             }
+
+
         }
 
         public void OnPlayerJoined(PlayerInput input)
         {
-            StartCoroutine(WaitSeconds(1, input));
+            //StartCoroutine(WaitSeconds(1, input));
 
             //if (input.gameObject.GetComponent<TankMovement>() != null)
             //{
@@ -112,7 +126,11 @@ namespace Complete
             //    Debug.Log("PLAYER NUMBER IS " + input.gameObject.GetComponent);
             //    InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
             //    input.SwitchCurrentControlScheme("Keyboard" + (numberOfInputPlayers), Keyboard.current);
-
+            for (int i = 1; i <= m_maxNumberOfPlayers; i++)
+               if (input.gameObject.name.Contains(i.ToString())) {
+                    InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
+                    input.SwitchCurrentControlScheme("Keyboard" + i, Keyboard.current);
+                }
             //}
 
         }
@@ -179,9 +197,23 @@ namespace Complete
             m_Tanks[i].m_Instance =
                 Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
 
+
+
             m_Tanks[i].Setup();
 
-            m_Tanks[i].m_Instance.AddComponent<PlayerInput>();
+            //multiplayer event system
+            m_Tanks[i].m_multiplayerEventSystem = multiplayerEventSystems[i];
+            m_Tanks[i].m_multiplayerEventSystem.playerRoot = m_Tanks[i].m_Instance;
+            m_Tanks[i].m_multiplayerEventSystem.firstSelectedGameObject = m_Tanks[i].m_Instance;
+
+            //Binds the player input to the tank
+            m_Tanks[i].m_Instance.GetComponent<TankShooting>().m_PlayerInput = m_Tanks[i].m_multiplayerEventSystem.gameObject.GetComponent<PlayerInput>();
+            m_Tanks[i].m_Instance.GetComponent<TankMovement>().m_PlayerInput = m_Tanks[i].m_multiplayerEventSystem.gameObject.GetComponent<PlayerInput>();
+
+            m_Tanks[i].m_Instance.GetComponent<TankHealth>().OnKilled += RearrangeCameras;
+
+
+            //m_Tanks[i].m_Instance.AddComponent<PlayerInput>();
 
 
             //TEST INPUT MANAGER
@@ -360,6 +392,8 @@ namespace Complete
             ResetAllTanks();
             DisableTankControl();
 
+            RearrangeCameras();
+
             // Snap the camera's zoom and position to something appropriate for the reset tanks
             m_CameraControl.SetStartPositionAndSize();
 
@@ -410,6 +444,9 @@ namespace Complete
             // Get a message based on the scores and whether or not there is a game winner and display it
             string message = EndMessage();
             m_MessageText.text = message;
+
+            //Disables the button to join another player
+            m_UIButtonJoinPlayer.SetActive(false);
 
             // Wait for the specified length of time until yielding control back to the game loop
             yield return m_EndWait;

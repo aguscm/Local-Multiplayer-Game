@@ -20,6 +20,9 @@ namespace Complete
         private float m_MovementInputValue;         // The current value of the movement input
         private float m_TurnInputValue;             // The current value of the turn input
         private float m_OriginalPitch;              // The pitch of the audio source at the start of the scene
+        public PlayerInput m_PlayerInput;           // Reference to the player input
+        private InputAction m_MoveAction;
+        private InputAction m_TurnAction;
 
 
         private void Awake()
@@ -54,6 +57,27 @@ namespace Complete
 
             // Store the original pitch of the audio source
             m_OriginalPitch = m_MovementAudio.pitch;
+
+            //Register the delegate of the movement
+            m_MoveAction = m_PlayerInput.actions["TankMove"];
+            m_MoveAction.performed += context =>
+            {
+                OnTankMove(context.ReadValue<float>());
+            };
+            m_MoveAction.canceled += context =>
+            {
+                OnTankMove(0f);
+            };
+            //Register the delegate of the turning movement
+            m_TurnAction = m_PlayerInput.actions["TankTurn"];
+            m_TurnAction.performed += context =>
+            {
+                OnTankTurn(context.ReadValue<float>());
+            };
+            m_TurnAction.canceled += context =>
+            {
+                OnTankTurn(0f);
+            };
         }
 
 
@@ -99,16 +123,16 @@ namespace Complete
             Turn();
         }
 
-        private void OnTankMove(InputValue value)
+        private void OnTankMove(float value)
         {
-           
-            m_MovementInputValue = value.Get<float>();
+
+            m_MovementInputValue = value;
         }
 
-        private void OnTankTurn(InputValue value)
+        private void OnTankTurn(float value)
         {
 
-            m_TurnInputValue = value.Get<float>();
+            m_TurnInputValue = value;
         }
 
         private void Move()
