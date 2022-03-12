@@ -101,7 +101,7 @@ public partial class @TankInputSystem : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""8d3bfd12-c931-4405-9d32-958845902893"",
-                    ""path"": ""<Keyboard>/enter"",
+                    ""path"": ""<Keyboard>/ctrl"",
                     ""interactions"": ""Hold"",
                     ""processors"": """",
                     ""groups"": ""Keyboard4"",

@@ -16,7 +16,7 @@ namespace Complete
 {
     public class GameManager : MonoBehaviour
     {
-        //[SerializeField] public TankInputSystem tankInputSystem;
+
         static public int m_numberOfPlayers = 2;    // The number of players of the game
         static public int m_maxNumberOfPlayers = 4; // The maximum number of players in the game
         public int m_NumRoundsToWin = 5;            // The number of rounds a single player has to win to win the game
@@ -37,14 +37,14 @@ namespace Complete
         private TankManager m_RoundWinner;          // Reference to the winner of the current round.  Used to make an announcement of who won
         private TankManager m_GameWinner;           // Reference to the winner of the game.  Used to make an announcement of who won
 
+        //UI
         public GameObject m_UIPlayerSelector;       // Reference to the Player Selector UI
         public GameObject m_UITextMsg;              // Reference to the UI Main Text
         private PlayerInputManager playerInputManager;
         public int numberOfInputPlayers = 0;
         public MultiplayerEventSystem[] multiplayerEventSystems;
         public GameObject m_UIButtonJoinPlayer;      // Reference to the button to join player, will be disabled when max players has been joined
-        //public TankInputSystem tankInputSystem;
-        //public InputAction ButtonNewPlayer;
+        private UIDisplayRounds uiDisplayRounds;    // Reference to the component to display the rounds won for every tank
    
         
 
@@ -52,8 +52,7 @@ namespace Complete
         private void Awake()
         {
             playerInputManager = GetComponent<PlayerInputManager>();
-            //tankInputSystem = new TankInputSystem();
-            //ButtonNewPlayer = tankInputSystem.TankActionMap.Start;
+            uiDisplayRounds = GetComponent<UIDisplayRounds>();
 
         }
         private void Start()
@@ -68,14 +67,13 @@ namespace Complete
 
         void Update()
         {
-            //if (ButtonNewPlayer.triggered)
-            //{
-            //    Debug.Log("trigger start");
-            //}
+
         }
 
+        //The method is called by the buttons of the UI Selection of players
         public void StartGame(int numberOfPlayers)
         {
+            uiDisplayRounds.UIRootContent.SetActive(true);
             SetNumberOfPlayers(numberOfPlayers);
             SpawnAllTanks();
             SetCameraTargets();
@@ -93,12 +91,21 @@ namespace Complete
 
         }
 
-        public void AddPlayer()
+        public void AddPlayer(int EventSystemIndex)
         {
-            if (m_numberOfPlayers <= m_maxNumberOfPlayers)
+            if (m_RoundNumber > 1)
+            {
+                Debug.Log("It is not possible to add more players after the first round");
+            }
+            else if (m_numberOfPlayers >= m_maxNumberOfPlayers)
+            {
+                Debug.Log("It is not possible to add more than " + m_maxNumberOfPlayers + " players");
+
+            }
+            else
             {
                 m_numberOfPlayers++;
-                SpawnTank(m_numberOfPlayers-1);
+                SpawnTank(m_numberOfPlayers - 1, EventSystemIndex-1);
                 RearrangeCameras();
 
                 // Disable the button of join another player if there are the max number of players
@@ -107,102 +114,54 @@ namespace Complete
                     m_UIButtonJoinPlayer.SetActive(false);
                 }
 
+                uiDisplayRounds.DisplayUI();
             }
-            else
-            {
-                Debug.Log("It is not possible to add more than " + m_maxNumberOfPlayers + " players");
-            }
-
 
         }
 
         public void OnPlayerJoined(PlayerInput input)
         {
-            //StartCoroutine(WaitSeconds(1, input));
-
-            //if (input.gameObject.GetComponent<TankMovement>() != null)
-            //{
-            //    //numberOfInputPlayers++;
-            //    Debug.Log("PLAYER NUMBER IS " + input.gameObject.GetComponent);
-            //    InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
-            //    input.SwitchCurrentControlScheme("Keyboard" + (numberOfInputPlayers), Keyboard.current);
             for (int i = 1; i <= m_maxNumberOfPlayers; i++)
                if (input.gameObject.name.Contains(i.ToString())) {
                     InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
                     input.SwitchCurrentControlScheme("Keyboard" + i, Keyboard.current);
                 }
-            //}
-
         }
 
-        public IEnumerator WaitSeconds (int seconds, PlayerInput input)
-        {
-            yield return new WaitForSeconds(seconds);
-            for (int i = 0; i < m_Tanks.Length; i++)
-            {
-
-                if (input.gameObject == m_Tanks[i].m_Instance)
-                {
-                    Debug.Log("TANK IS " + m_Tanks[i].m_Instance.name);
-                    Debug.Log("PLAYER NUMBER IS " + m_Tanks[i].m_PlayerNumber);
-                    ////TankInputSystem tankInputSystem = new TankInputSystem();
-                    //InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
-                    //input.neverAutoSwitchControlSchemes = true;
-                    //input.actions = m_tankInputAsset;
-                    //input.defaultControlScheme = "Keyboard" + (m_Tanks[i].m_PlayerNumber);
-                    //input.SwitchCurrentActionMap("TankActionMap");
-
-                    InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
-                    input.SwitchCurrentControlScheme("Keyboard" + (m_Tanks[i].m_PlayerNumber), Keyboard.current);
-                    break;
-                }
-            }
-        }
-
-        //public void OnPlayerLeft(PlayerInput input)
-        //{
-        //    if (input.gameObject.GetComponent<TankMovement>() != null)
-        //    {
-        //        numberOfInputPlayers--;
-
-        //    }
-        //}
         private void SpawnAllTanks()
 		{
 
             // For all the players...
             for (int i = 0; i < m_numberOfPlayers; i++)
 			{
-                SpawnTank(i);
+                SpawnTank(i, i);
             }
 
             m_mainCam.enabled = false;
 
-		}
+            //Displays the UI of the rounds won
+            uiDisplayRounds.DisplayUI();
 
-        void SpawnTank(int i)
+            //Disables the button of join players if there are the max number
+            if (m_numberOfPlayers == m_maxNumberOfPlayers)
+            {
+                m_UIButtonJoinPlayer.SetActive(false);
+            }
+
+        }
+
+        void SpawnTank(int i, int EventSystemIndex)
         {
-            //var newTank = PlayerInput.Instantiate(m_TankPrefab, -1, "Keyboard"+(i+1), -1, Keyboard.current);
-            //m_Tanks[i].m_PlayerNumber = i + 1;
-            //m_Tanks[i].m_Instance = newTank.gameObject;
-            //newTank.transform.position = m_Tanks[i].m_SpawnPoint.position;
-            //newTank.transform.rotation = m_Tanks[i].m_SpawnPoint.rotation;
-            //m_Tanks[i].Setup();
-
-
-
 
             // ... create the tank, set their player number and references needed for control
             m_Tanks[i].m_PlayerNumber = i + 1;
             m_Tanks[i].m_Instance =
                 Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
 
-
-
             m_Tanks[i].Setup();
 
-            //multiplayer event system
-            m_Tanks[i].m_multiplayerEventSystem = multiplayerEventSystems[i];
+            //Multiplayer event system
+            m_Tanks[i].m_multiplayerEventSystem = multiplayerEventSystems[EventSystemIndex];
             m_Tanks[i].m_multiplayerEventSystem.playerRoot = m_Tanks[i].m_Instance;
             m_Tanks[i].m_multiplayerEventSystem.firstSelectedGameObject = m_Tanks[i].m_Instance;
 
@@ -213,31 +172,14 @@ namespace Complete
             m_Tanks[i].m_Instance.GetComponent<TankHealth>().OnKilled += RearrangeCameras;
 
 
-            //m_Tanks[i].m_Instance.AddComponent<PlayerInput>();
-
-
-            //TEST INPUT MANAGER
-            //var input = m_Tanks[i].m_Instance.GetComponent<PlayerInput>();
-            ////playerInputManager.JoinPlayer(i, -1, "Keyboard" + (i + 1), Keyboard.current);
-
-            //InputUser.PerformPairingWithDevice(Keyboard.current, input.user);
-            //input.SwitchCurrentControlScheme("Keyboard" + (input.gameObject.GetComponent<TankMovement>().m_PlayerNumber), Keyboard.current);
-
-            //END TEST
-
-
             //Changes the layer of the followcam
             var followCam = m_Tanks[i].m_Instance.transform.Find("Follow Cam");
             if (followCam != null)
             {              
                 followCam.gameObject.layer = LayerMask.NameToLayer("CamP" + (i + 1));
             }
-            //AddCamera(i, m_mainCam);
-            //If the tank is not still playing, deactivate its controllers
-            //if (i >= m_numberOfPlayers)
-            //{
-            //    DisableTank(m_Tanks[i].m_Instance);
-            //}
+
+
         }
 
         private void DisableTank(GameObject tank)
@@ -280,11 +222,7 @@ namespace Complete
                 }
                 
             }
-            //foreach (Camera camera in Camera.allCameras)
-            //{
-            //    camera.enabled = false;
-            //    Debug.Log(camera.gameObject.name);
-            //}
+
 
             int tanksAlive = 0;
             List<TankManager> TanksAlive = new List<TankManager>();
@@ -298,7 +236,6 @@ namespace Complete
                     TanksAlive.Add(m_Tanks[i]);
                     AddCamera(i, m_mainCam);
 
-                    //m_Tanks[i].m_PlayerCamera.enabled = true;
                 }
             }
             switch (TanksAlive.Count)
@@ -311,18 +248,18 @@ namespace Complete
                     break;
                 case 3:
                     Debug.Log("3 cameras");
-                    TanksAlive[0].m_PlayerCamera.rect = new Rect(0.02f, 0.51f, 0.48f, 0.48f);
-                    TanksAlive[1].m_PlayerCamera.rect = new Rect(0.51f, 0.51f, 0.48f, 0.48f);
-                    TanksAlive[2].m_PlayerCamera.rect = new Rect(0.02f, 0.01f, 0.48f, 0.48f);
+                    TanksAlive[0].m_PlayerCamera.rect = new Rect(0.00f, 0.505f, 0.495f, 0.495f);
+                    TanksAlive[1].m_PlayerCamera.rect = new Rect(0.505f, 0.505f, 0.495f, 0.495f);
+                    TanksAlive[2].m_PlayerCamera.rect = new Rect(0.00f, 0.00f, 0.495f, 0.495f);
                     m_OverheadCamera.gameObject.SetActive(true);
                     m_OverheadCamera.rect = new Rect(0.51f, 0.01f, 0.48f, 0.48f);
                     break;
                 case 4:
                     Debug.Log("4 cameras");
-                    TanksAlive[0].m_PlayerCamera.rect = new Rect(0.02f, 0.51f, 0.48f, 0.48f);
-                    TanksAlive[1].m_PlayerCamera.rect = new Rect(0.51f, 0.51f, 0.48f, 0.48f);
-                    TanksAlive[2].m_PlayerCamera.rect = new Rect(0.02f, 0.01f, 0.48f, 0.48f);
-                    TanksAlive[3].m_PlayerCamera.rect = new Rect(0.51f, 0.01f, 0.48f, 0.48f);
+                    TanksAlive[0].m_PlayerCamera.rect = new Rect(0.00f, 0.505f, 0.495f, 0.495f);
+                    TanksAlive[1].m_PlayerCamera.rect = new Rect(0.505f, 0.505f, 0.495f, 0.495f);
+                    TanksAlive[2].m_PlayerCamera.rect = new Rect(0.00f, 0.00f, 0.495f, 0.495f);
+                    TanksAlive[3].m_PlayerCamera.rect = new Rect(0.505f, 0.00f, 0.495f, 0.495f);
                     m_OverheadCamera.gameObject.SetActive(false);
                     break;
             }
@@ -349,8 +286,6 @@ namespace Complete
         // This is called from start and will run each phase of the game one after another
         private IEnumerator GameLoop()
         {
-            //// Start off by running the 'GameStarting' coroutine but don't return until it's finished
-            //yield return StartCoroutine(GameStarting());
 
             // Continue by running the 'RoundStarting' coroutine but don't return until it's finished
             yield return StartCoroutine (RoundStarting());
@@ -375,6 +310,7 @@ namespace Complete
             }
         }
 
+        //Deprecated
         private IEnumerator GameStarting() {
 
             m_UIPlayerSelector.SetActive(false);
@@ -408,6 +344,8 @@ namespace Complete
 
         private IEnumerator RoundPlaying()
         {
+            //Activate the button of join player if it is the round 1 and there are less than 4 players
+            if (m_RoundNumber == 1 && m_numberOfPlayers < 4) m_UIButtonJoinPlayer.SetActive(true);
             // As soon as the round begins playing let the players control the tanks
             EnableTankControl();
 
@@ -447,6 +385,9 @@ namespace Complete
 
             //Disables the button to join another player
             m_UIButtonJoinPlayer.SetActive(false);
+
+            //Displays the rounds won of every tank
+            uiDisplayRounds.DisplayUI();
 
             // Wait for the specified length of time until yielding control back to the game loop
             yield return m_EndWait;
@@ -548,7 +489,6 @@ namespace Complete
                 m_Tanks[i].Reset();
             }
         }
-
 
         private void EnableTankControl()
         {

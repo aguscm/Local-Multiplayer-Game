@@ -8,10 +8,11 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.UI;
+using Complete;
 
 public class UIMouseController : MonoBehaviour
 {
-    public Complete.GameManager gameManager;
+    public GameManager gameManager;
     public Button JoinPlayer3;
     public Button JoinPlayer4;
     public InputActionAsset inputActions;
@@ -37,7 +38,7 @@ public class UIMouseController : MonoBehaviour
     }
     void TaskOnClick()
     {
-        Debug.Log("click");
+        gameManager.AddPlayer(GameManager.m_numberOfPlayers + 1);
     }
 
     // Update is called once per frame
